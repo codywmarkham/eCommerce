@@ -1,15 +1,17 @@
 const router = require('express').Router();
-const { Tag, Product, ProductTag } = require('../../models');
+const { Category, Product } = require('../../models');
 
 router.get('/', (req, res) => {
-  Tag.findAll({
-    include: [
-      {
+  Category.findAll(
+    {
+      include : [
+        {
         model: Product,
         attributes: ['id', 'product_name', 'price', 'stock', 'category_id']
-      }
-    ]
-  })
+        }
+      ]
+    }
+  )
   .then(dbCategoryData => res.json(dbCategoryData))
   .catch(err => {
     console.log(err);
@@ -18,7 +20,7 @@ router.get('/', (req, res) => {
 });
 
 router.get('/:id', (req, res) => {
-  Tag.findOne({
+  Category.findOne({
     where: {
       id: req.params.id
     },
@@ -31,7 +33,7 @@ router.get('/:id', (req, res) => {
   })
     .then(dbCategoryData => {
       if (!dbCategoryData) {
-        res.status(404).json({ message: 'No tag found with id'}); 
+        res.status(404).json({ message: 'No category found with id'}); 
         return; 
       }
       res.json(dbCategoryData);
@@ -43,25 +45,26 @@ router.get('/:id', (req, res) => {
 });
 
 router.post('/', (req, res) => {
-  Tag.create({
-    tag_name: req.body.tag_name
+  Category.create({
+    category_name: req.body.category_name
   })
   .then(dbCategoryData => res.json(dbCategoryData))
   .catch(err => {
     console.log(err);
     res.status(500).json(err);
   });
+
 });
 
 router.put('/:id', (req, res) => {
-  Tag.update(req.body, {
+  Category.update(req.body, {
     where: {
         id: req.params.id
     }
   })
     .then(dbCategoryData => {
         if (!dbCategoryData[0]) {
-            res.status(404).json({ message: 'No tag found with id'});
+            res.status(404).json({ message: 'No category found with id'});
             return;
         }
         res.json(dbCategoryData);
@@ -73,14 +76,14 @@ router.put('/:id', (req, res) => {
 });
 
 router.delete('/:id', (req, res) => {
-  Tag.destroy({
+  Category.destroy({
     where: {
       id: req.params.id
     }
   })
   .then(dbCategoryData => {
     if (!dbCategoryData) {
-        res.status(404).json({ message: 'No tag found with id'});
+        res.status(404).json({ message: 'No category found with id'});
         return;
     }
     res.json(dbCategoryData);
@@ -89,6 +92,7 @@ router.delete('/:id', (req, res) => {
     console.log(err);
     res.status(500).json(err);
 });
+
 });
 
 module.exports = router;
